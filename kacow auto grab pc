@@ -1,0 +1,91 @@
+-- PREMIUM INSTANT E UI
+local Player = game:GetService("Players").LocalPlayer
+local PPS = game:GetService("ProximityPromptService")
+local UIS = game:GetService("UserInputService")
+
+-- GUI temizle
+local guiParent = Player:WaitForChild("PlayerGui")
+if guiParent:FindFirstChild("KacowUI") then
+	guiParent.KacowUI:Destroy()
+end
+
+local sg = Instance.new("ScreenGui", guiParent)
+sg.Name = "KacowUI"
+sg.ResetOnSpawn = false
+
+-- ANA FRAME
+local Main = Instance.new("Frame", sg)
+Main.Size = UDim2.new(0, 320, 0, 110)
+Main.Position = UDim2.new(0.5, -160, 0, 80)
+Main.BackgroundColor3 = Color3.fromRGB(15, 0, 30)
+Main.Active = true
+Main.Draggable = true
+
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0,20)
+
+-- Neon kenarlık
+local Stroke = Instance.new("UIStroke", Main)
+Stroke.Thickness = 3
+Stroke.Color = Color3.fromRGB(0,255,200)
+
+-- ÜST BAŞLIK
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1, 0, 0.5, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "SCRIPT BY KACOW"
+Title.Font = Enum.Font.GothamBlack
+Title.TextScaled = true
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+
+-- ALT DURUM
+local Status = Instance.new("TextLabel", Main)
+Status.Size = UDim2.new(1, 0, 0.5, 0)
+Status.Position = UDim2.new(0,0,0.5,0)
+Status.BackgroundTransparency = 1
+Status.Text = "INSTANT E : OFF  [Q]"
+Status.Font = Enum.Font.GothamBold
+Status.TextScaled = true
+Status.TextColor3 = Color3.fromRGB(0,255,200)
+
+-- LOGIC
+local Active = false
+
+local function Toggle()
+	Active = not Active
+	
+	if Active then
+		Status.Text = "INSTANT E : ACTIVE"
+		Status.TextColor3 = Color3.fromRGB(0,255,150)
+		print("Instant E Activated - Script By Kacow")
+	else
+		Status.Text = "INSTANT E : OFF  [Q]"
+		Status.TextColor3 = Color3.fromRGB(0,255,200)
+		print("Instant E Disabled")
+	end
+end
+
+UIS.InputBegan:Connect(function(i,gp)
+	if not gp and i.KeyCode == Enum.KeyCode.Q then
+		Toggle()
+	end
+end)
+
+-- PROXIMITY
+PPS.PromptButtonHoldBegan:Connect(function(prompt)
+	if Active then
+		prompt.HoldDuration = 0
+		task.spawn(function()
+			prompt:InputHoldBegin()
+			prompt:InputHoldEnd()
+			if fireproximityprompt then
+				fireproximityprompt(prompt)
+			end
+		end)
+	end
+end)
+
+PPS.PromptShown:Connect(function(prompt)
+	if Active then
+		prompt.HoldDuration = 0
+	end
+end)
